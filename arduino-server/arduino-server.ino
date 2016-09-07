@@ -1,18 +1,24 @@
 #include <Servo.h>
 
-Servo servo;
+int upPin = 4;
+int downPin = 3;
+
 int pos = 0;
 byte state = (byte) 255;
 
 void setup() {
-  servo.attach(9);
+  pinMode(upPin, OUTPUT);
+  pinMode(downPin, OUTPUT);
+
+  digitalWrite(downPin, LOW);
+  digitalWrite(upPin, LOW);
+  
   Serial.begin(9600);
 }
 
 void loop() {
   if (Serial.available() > 0) {
     byte in = Serial.read();
-
     state = in;
   }
 
@@ -20,21 +26,24 @@ void loop() {
     moveUp();
   } else if(state == (byte) 2) {
     moveDown();
+  } else if(state == (byte) 255) {
+    stopM();
   }
   delay(50);
 }
 
 void moveUp() {
-  if(pos < 180) {
-    pos++;
-    servo.write(pos);
-  }
+  digitalWrite(downPin, LOW);
+  digitalWrite(upPin, HIGH);
 }
 
 void moveDown() {
-  if(pos > 0) {
-    pos--;
-    servo.write(pos);
-  }
+  digitalWrite(upPin, LOW);
+  digitalWrite(downPin, HIGH);
+}
+
+void stopM() {
+   digitalWrite(downPin, LOW);
+  digitalWrite(upPin, LOW);
 }
 
